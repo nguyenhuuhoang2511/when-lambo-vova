@@ -233,7 +233,7 @@ function renderFx() {
 
 function renderTickerStrip() {
   const el = document.getElementById("ticker-strip");
-  if (tickerError) { el.innerHTML = '<span class="muted">Chưa tải được giá trực tiếp từ CoinGecko — trang tự thử lại sau ít phút.</span>'; return; }
+  if (tickerError) { el.innerHTML = '<span class="muted">Chưa tải được giá trực tiếp — trang tự thử lại sau ít phút.</span>'; return; }
   if (!tickers.length) { el.innerHTML = '<span class="muted">Đang tải giá…</span>'; return; }
   el.innerHTML = tickers.map((t) => {
     const s = SYMBOLS.find((x) => x.id === t.id);
@@ -316,7 +316,7 @@ function renderGoldChart() { drawFullChart(goldKline, goldKlineError, "gchart-ar
 function drawFullChart(klineData, klineError, areaId, cvId, rcId, factsId) {
   const box = document.getElementById(areaId);
   if (!box) return;
-  if (klineError) { box.innerHTML = '<div class="note">Chưa tải được dữ liệu giá lịch sử từ CoinGecko (giới hạn lượt gọi miễn phí). Trang tự thử lại sau; nếu đã từng mở trang, số liệu gần nhất vẫn hiển thị.</div>'; return; }
+  if (klineError) { box.innerHTML = '<div class="note">Chưa tải được dữ liệu giá lịch sử (nguồn công khai giới hạn lượt gọi). Trang tự thử lại sau; nếu đã từng mở trang, số liệu gần nhất vẫn hiển thị.</div>'; return; }
   if (!klineData) { box.innerHTML = '<p class="muted">Đang tải nến ngày và tính chỉ báo…</p>'; return; }
 
   const N = 90;
@@ -403,8 +403,8 @@ function drawFullChart(klineData, klineError, areaId, cvId, rcId, factsId) {
 
 /* ---------- Page fragments ---------- */
 function marketTableHTML(limit) {
-  if (tickerError) return '<div class="note">Chưa tải được giá trực tiếp từ API CoinGecko (giới hạn lượt gọi miễn phí). Trang tự thử lại sau ít phút và hiển thị số liệu gần nhất đã lưu nếu có.</div>';
-  if (!tickers.length) return '<p class="muted">Đang tải giá trực tiếp từ API công khai CoinGecko…</p>';
+  if (tickerError) return '<div class="note">Chưa tải được giá trực tiếp (nguồn công khai giới hạn lượt gọi). Trang tự thử lại sau ít phút và hiển thị số liệu gần nhất đã lưu nếu có.</div>';
+  if (!tickers.length) return '<p class="muted">Đang tải giá trực tiếp…</p>';
   const rows = (limit ? tickers.slice(0, limit) : tickers).map((t) => {
     const s = SYMBOLS.find((x) => x.id === t.id);
     const cls = t.changePct >= 0 ? "up" : "down";
@@ -412,7 +412,7 @@ function marketTableHTML(limit) {
     return `<tr><td class="pair">${s.pair}<small>${s.name}</small></td><td class="num">${fmtPrice(t.price)} $</td><td class="num ${cls}">${sign}${fmt(t.changePct)}%</td></tr>`;
   }).join("");
   return `<table class="price"><thead><tr><th>Cặp</th><th class="num">Giá</th><th class="num">24 giờ</th></tr></thead><tbody>${rows}</tbody></table>
-  <p class="table-note">Nguồn: API công khai CoinGecko, cập nhật lúc ${lastUpdate ? lastUpdate.toLocaleTimeString("vi-VN") : "—"}. Tự tải lại mỗi 90 giây (tối đa 30 phút nếu dùng bản ghi của máy chủ). Tất cả cặp quy về …/USD. PAXG là vàng token hóa, chỉ tham khảo, không thay giá vàng thế giới hay SJC.</p>`;
+  <p class="table-note">Nguồn: dữ liệu giá công khai, cập nhật lúc ${lastUpdate ? lastUpdate.toLocaleTimeString("vi-VN") : "—"}. Tự tải lại mỗi 90 giây (tối đa 30 phút nếu dùng bản ghi của máy chủ). Tất cả cặp quy về …/USD. PAXG là vàng token hóa, chỉ tham khảo, không thay giá vàng thế giới hay SJC.</p>`;
 }
 
 function barsHTML() {
@@ -548,6 +548,7 @@ const PAGES = {
   home: () => `
     <section class="hero blk">
       <div>
+        <p class="dateline">Sài Gòn, ${new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
         <h2 class="big">Đọc thị trường <em>cho bớt mơ hồ.</em></h2>
         <p class="standfirst">Đây là nhật ký của When Lambo Vova. Giá đang chạy ở ngay trên, chart chỉ vẽ một bộ chỉ báo duy nhất mình dùng thật, còn bài viết là những lần thị trường dạy mình một bài học. Không điểm vào, không hứa hướng đi — chỉ dữ liệu và cách đọc.</p>
         <p class="byline">When Lambo Vova · Bài do Vova soạn từ dữ liệu lịch sử</p>
@@ -600,7 +601,7 @@ const PAGES = {
         <div id="chart-area"><p class="muted">Đang tải nến ngày và tính chỉ báo…</p></div>
         <canvas id="chart"></canvas>
         <canvas id="rsi"></canvas>
-        <p class="table-note">Nguồn: giá BTC/USD theo ngày từ API công khai CoinGecko, tổng hợp nhiều sàn. Số liệu một nguồn tổng hợp không thay chart của từng sàn cụ thể.</p>
+        <p class="table-note">Nguồn: giá BTC/USD theo ngày, tổng hợp nhiều sàn từ dữ liệu công khai. Số liệu một nguồn tổng hợp không thay chart của từng sàn cụ thể.</p>
       </div>
       <div class="facts" id="facts"></div>
       <div class="note">Đọc theo đúng bộ cố định: giá đang ở đâu so với từng đường MA và EMA, RSI ở vùng nào, giá nằm trên hay dưới đường giữa Bollinger. Trang chỉ mô tả trạng thái, không kết luận thay người xem.</div>
@@ -669,7 +670,7 @@ const PAGES = {
         <div id="gchart-area"><p class="muted">Đang tải nến ngày và tính chỉ báo…</p></div>
         <canvas id="gchart"></canvas>
         <canvas id="grsi"></canvas>
-        <p class="table-note">Nguồn: giá PAXG/USD theo ngày từ API công khai CoinGecko. PAXG là token bám giá vàng thế giới, chỉ tham khảo, không thay giá SJC.</p>
+        <p class="table-note">Nguồn: giá PAXG/USD theo ngày từ dữ liệu công khai. PAXG là token bám giá vàng thế giới, chỉ tham khảo, không thay giá SJC.</p>
       </div>
       <div class="facts" id="gfacts"></div>
       <div class="note">Đọc theo đúng bộ cố định: giá đang ở đâu so với từng đường MA và EMA, RSI ở vùng nào, giá nằm trên hay dưới đường giữa Bollinger. Trang chỉ mô tả trạng thái, không kết luận thay người xem.</div>
@@ -683,27 +684,6 @@ const PAGES = {
       <div id="fx-table"><p class="muted">Đang tải tỷ giá…</p></div>
     </section>
     ${promoBandHTML()}`,
-  "mo-hinh": () => `
-    <section class="blk" style="margin-top:40px">
-      <p class="label">Minh bạch</p>
-      <h2 class="section">Cách trang này làm</h2>
-      <p class="section-sub">Viết ra rõ ràng để ai đọc cũng biết mình đang đọc cái gì.</p>
-      <div class="article">
-        <h3>Giống các trang tài chính khác ở cơ chế</h3>
-        <ul>
-          <li>Tin tức: tổng hợp từ nguồn chính thống, viết lại bằng tiếng Việt, tin nóng cần tối thiểu hai nguồn.</li>
-          <li>Kiến thức: bài tự viết từ case lịch sử thật, số liệu thật, mỗi bài một bài học.</li>
-          <li>Dữ liệu thị trường realtime: API công khai miễn phí (trang này dùng CoinGecko), chart tính theo đúng một bộ chỉ báo cố định.</li>
-          <li>Kiếm tiền sau cùng, khi đủ traffic: link giới thiệu sàn hoặc IB, luôn ghi rõ có hoa hồng.</li>
-        </ul>
-        <h3>Khác ở nội dung</h3>
-        <ul>
-          <li>Góc nhìn tâm lý giao dịch và bài học từ cú sập, không phím kèo.</li>
-          <li>Mọi cặp tiền quy về …/USD; vàng luôn kèm giá SJC trong nước.</li>
-          <li>Mỗi bài kết bằng một điều đúc kết kiểm chứng trên chart.</li>
-        </ul>
-      </div>
-    </section>`,
 };
 
 function route() {
