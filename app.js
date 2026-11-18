@@ -548,7 +548,7 @@ const PAGES = {
   home: () => `
     <section class="hero blk">
       <div>
-        <p class="dateline">Sài Gòn, ${new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
+        <p class="dateline">${new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" })}</p>
         <h2 class="big">Đọc thị trường <em>cho bớt mơ hồ.</em></h2>
         <p class="standfirst">Đây là nhật ký của When Lambo Vova. Giá đang chạy ở ngay trên, chart chỉ vẽ một bộ chỉ báo duy nhất mình dùng thật, còn bài viết là những lần thị trường dạy mình một bài học. Không điểm vào, không hứa hướng đi — chỉ dữ liệu và cách đọc.</p>
         <p class="byline">When Lambo Vova · Bài do Vova soạn từ dữ liệu lịch sử</p>
@@ -734,7 +734,7 @@ window.addEventListener("hashchange", route);
 window.addEventListener("resize", () => { if (currentRoute === "thi-truong") renderChart(); if (currentRoute === "vang") renderGoldChart(); });
 
 const dl = document.getElementById("date-line");
-if (dl) dl.textContent = "Sài Gòn, " + new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+if (dl) dl.textContent = new Date().toLocaleDateString("vi-VN", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
 route();
 loadTickers();
