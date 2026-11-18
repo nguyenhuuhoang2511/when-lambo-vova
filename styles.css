@@ -28,6 +28,7 @@ a:hover { text-decoration: underline; text-underline-offset: 3px; }
 /* ---------- Masthead ---------- */
 .top { background: var(--paper); border-bottom: 1px solid var(--ink); }
 .masthead { text-align: center; padding: 34px 20px 18px; }
+.brand-logo { width: 68px; height: 68px; border-radius: 50%; object-fit: cover; display: block; margin: 0 auto 14px; border: 1px solid var(--hairline); }
 .masthead .kicker {
   font-size: 10.5px; letter-spacing: 0.32em; text-transform: uppercase;
   color: var(--muted); margin-bottom: 10px;
@@ -89,6 +90,7 @@ section.blk:first-child { margin-top: 0; }
 }
 .hero h2.big em { font-style: italic; color: var(--accent); }
 .hero .standfirst { margin-top: 20px; font-size: 15.5px; color: var(--ink-soft); max-width: 46ch; }
+.hero .dateline { font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
 .hero .byline { margin-top: 22px; font-size: 11.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); }
 .hero figure img { width: 100%; display: block; filter: grayscale(0.35) contrast(0.96) brightness(1.03); }
 .hero figcaption { margin-top: 8px; font-size: 11px; color: var(--muted); letter-spacing: 0.06em; text-align: right; }
