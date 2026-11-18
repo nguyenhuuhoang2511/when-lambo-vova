@@ -347,7 +347,7 @@ function drawFullChart(klineData, klineError, areaId, cvId, rcId, factsId) {
   const ctx = cv.getContext("2d"); ctx.scale(dpr, dpr);
   const x0 = 8, x1 = W - 62, y = 10, h = H - 34;
 
-  ctx.strokeStyle = "#eee7e3"; ctx.lineWidth = 1; ctx.fillStyle = "#8a8284"; ctx.font = "11px Segoe UI, sans-serif";
+  ctx.strokeStyle = themeColor("--chart-grid"); ctx.lineWidth = 1; ctx.fillStyle = themeColor("--chart-text"); ctx.font = "11px Segoe UI, sans-serif";
   for (let i = 0; i <= 4; i++) {
     const gy = y + (h * i) / 4;
     ctx.beginPath(); ctx.moveTo(x0, gy); ctx.lineTo(x1, gy); ctx.stroke();
@@ -370,15 +370,15 @@ function drawFullChart(klineData, klineError, areaId, cvId, rcId, factsId) {
   drawLine(ctx, ma[20], x0, x1, y, min, max, h, "#2e86de", 1.4);
   drawLine(ctx, ma[50], x0, x1, y, min, max, h, "#8e44ad", 1.4);
   drawLine(ctx, ma[200], x0, x1, y, min, max, h, "#c0392b", 1.6);
-  drawLine(ctx, closes, x0, x1, y, min, max, h, "#111111", 1.8);
+  drawLine(ctx, closes, x0, x1, y, min, max, h, themeColor("--chart-price"), 1.8);
 
   // RSI panel
   const rc = document.getElementById(rcId);
   rc.width = W * dpr; rc.height = rc.clientHeight * dpr;
   const rctx = rc.getContext("2d"); rctx.scale(dpr, dpr);
   const rh = rc.clientHeight - 16, ry = 6;
-  rctx.strokeStyle = "#eee7e3"; rctx.beginPath(); rctx.moveTo(x0, ry + rh * 0.3); rctx.lineTo(x1, ry + rh * 0.3); rctx.moveTo(x0, ry + rh * 0.7); rctx.lineTo(x1, ry + rh * 0.7); rctx.stroke();
-  rctx.fillStyle = "#8a8284"; rctx.fillText("70", x1 + 6, ry + rh * 0.3 + 4); rctx.fillText("30", x1 + 6, ry + rh * 0.7 + 4); rctx.fillText("RSI 14", x0, ry + rh + 12);
+  rctx.strokeStyle = themeColor("--chart-grid"); rctx.beginPath(); rctx.moveTo(x0, ry + rh * 0.3); rctx.lineTo(x1, ry + rh * 0.3); rctx.moveTo(x0, ry + rh * 0.7); rctx.lineTo(x1, ry + rh * 0.7); rctx.stroke();
+  rctx.fillStyle = themeColor("--chart-text"); rctx.fillText("70", x1 + 6, ry + rh * 0.3 + 4); rctx.fillText("30", x1 + 6, ry + rh * 0.7 + 4); rctx.fillText("RSI 14", x0, ry + rh + 12);
   drawLine(rctx, rsi, x0, x1, ry, 0, 100, rh, "#b8860b", 1.5);
   const lastRsi = rsi[at];
   if (lastRsi !== null) {
@@ -686,15 +686,36 @@ const PAGES = {
     ${promoBandHTML()}`,
 };
 
+function themeColor(name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim() || "#888"; }
+
+const themeToggle = document.getElementById("theme-toggle");
+function syncThemeIcon() {
+  if (!themeToggle) return;
+  const cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+  themeToggle.querySelectorAll("button").forEach((b) => b.classList.toggle("active", b.dataset.setTheme === cur));
+}
+if (themeToggle) {
+  syncThemeIcon();
+  themeToggle.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => {
+    const next = b.dataset.setTheme;
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("wlv-theme", next); } catch (e) {}
+    syncThemeIcon();
+    if (klineData || klineError) renderChart();
+    if (goldKline || goldKlineError) renderGoldChart();
+  }));
+}
+
 function route() {
   const hash = location.hash.replace(/^#\/?/, "");
   const app = document.getElementById("app");
   let page = "home";
   if (hash.startsWith("bai/")) {
     const key = hash.slice(4);
-    if (ARTICLES[key]) { app.innerHTML = articleHTML(key); page = hash.startsWith("bai/nhan-dinh") ? "tin-tuc" : "kien-thuc"; window.scrollTo(0, 0); setActive(page); currentRoute = page; return; }
+    if (ARTICLES[key]) { app.innerHTML = articleHTML(key); page = hash.startsWith("bai/nhan-dinh") ? "tin-tuc" : "kien-thuc"; document.body.dataset.page = page; window.scrollTo(0, 0); setActive(page); currentRoute = page; return; }
   }
   if (PAGES[hash]) page = hash;
+  document.body.dataset.page = page;
   app.innerHTML = PAGES[page]();
   currentRoute = page;
   setActive(page);
